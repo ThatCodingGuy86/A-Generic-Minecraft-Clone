@@ -29,6 +29,9 @@ public:
 	int x = 0;
 	int y = 0;
 
+	// Self-explanatory
+	int chunkMeshSize = 0;
+
 	Chunk(int _ID, int seed)
 	{
 		ID = _ID;
@@ -92,7 +95,6 @@ public:
 									verts.insert(verts.end(), voxelData[4 + (6 * i)]);
 									verts.insert(verts.end(), voxelData[5 + (6 * i)]);
 								}
-								vertsAdded += 6 * 6;
 							}
 						}
 
@@ -109,7 +111,6 @@ public:
 									verts.insert(verts.end(), voxelData[(4 + (6 * i)) + 6 * 6]);
 									verts.insert(verts.end(), voxelData[(5 + (6 * i)) + 6 * 6]);
 								}
-								vertsAdded += 6 * 6;
 							}
 						}
 
@@ -126,7 +127,6 @@ public:
 									verts.insert(verts.end(), voxelData[(4 + (6 * i)) + (6 * 6) * 2]);
 									verts.insert(verts.end(), voxelData[(5 + (6 * i)) + (6 * 6) * 2]);
 								}
-								vertsAdded += 6 * 6;
 							}
 						}
 
@@ -143,7 +143,6 @@ public:
 									verts.insert(verts.end(), voxelData[(4 + (6 * i)) + (6 * 6) * 3]);
 									verts.insert(verts.end(), voxelData[(5 + (6 * i)) + (6 * 6) * 3]);
 								}
-								vertsAdded += 6 * 6;
 							}
 						}
 
@@ -160,7 +159,6 @@ public:
 									verts.insert(verts.end(), voxelData[(4 + (6 * i)) + (6 * 6) * 4]);
 									verts.insert(verts.end(), voxelData[(5 + (6 * i)) + (6 * 6) * 4]);
 								}
-								vertsAdded += 6 * 6;
 							}
 						}
 
@@ -177,7 +175,6 @@ public:
 									verts.insert(verts.end(), voxelData[(4 + (6 * i)) + (6 * 6) * 5]);
 									verts.insert(verts.end(), voxelData[(5 + (6 * i)) + (6 * 6) * 5]);
 								}
-								vertsAdded += 6 * 6;
 							}
 						}
 					}
@@ -186,6 +183,7 @@ public:
 		}
 		
 		chunkVertSize = verts.size() / 6; // Divided by 6 because 1 vert definition is 6 elements long
+		chunkMeshSize = verts.size() / 6;
 	}
 };
 

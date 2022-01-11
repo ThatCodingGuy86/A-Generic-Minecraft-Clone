@@ -186,7 +186,7 @@ int main()
         {
             for (int x = 0; x < chunkRenderSize; x++)
             {
-                // Bind correct VAO from the chunk VAO's
+                // Bind the hopefully correct VAO from the chunk VAO's
                 glBindVertexArray(chunkVAOs[i]);
                 // Set up model matrix
                 model = glm::mat4(1.0f);
