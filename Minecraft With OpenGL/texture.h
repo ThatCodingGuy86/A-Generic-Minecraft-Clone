@@ -44,7 +44,7 @@ public:
 		}
 		else
 		{
-			std::cout << "Failed to load texture : " << path << std::endl;
+			std::cout << "Failed to load texture : " << path << "\n";
 		}
 		stbi_image_free(data);
 	}

@@ -6,7 +6,7 @@ unsigned int textVAO, textVBO;
 
 void Text()
 {
-    // This is ridculous.
+    // This is ridiculous.
 
     glGenVertexArrays(1, &textVAO);
     glGenBuffers(1, &textVBO);

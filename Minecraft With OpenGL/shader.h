@@ -8,6 +8,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include "error.h"
 
 class Shader
 {
@@ -28,7 +29,8 @@ public:
         std::ifstream vShaderFile;
         std::ifstream fShaderFile;
         std::ifstream gShaderFile;
-        // Ensure ifstream objects can throw exceptions:
+
+        // Ensure ifstream objects can throw exceptions
         vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
         fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
         gShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
@@ -38,15 +40,19 @@ public:
             vShaderFile.open(vertexPath);
             fShaderFile.open(fragmentPath);
             std::stringstream vShaderStream, fShaderStream;
+
             // Read file's buffer contents into streams
             vShaderStream << vShaderFile.rdbuf();
             fShaderStream << fShaderFile.rdbuf();
+
             // Close file handlers
             vShaderFile.close();
             fShaderFile.close();
+
             // Convert stream into string
             vertexCode = vShaderStream.str();
             fragmentCode = fShaderStream.str();
+
             // If geometry shader path is present, also load a geometry shader (but why? Nobody uses the things..)
             if (geometryPath != nullptr)
             {
@@ -59,7 +65,12 @@ public:
         }
         catch (std::ifstream::failure& e)
         {
-            std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ : " << e.what() << std::endl;
+            //std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ : " << e.what()  << "\n";
+
+            std::stringstream error;
+            error << "[SHADERGEN/FERR]: Failed to read file : " << e.what() << "\n";
+
+            err(error.str());
         }
         const char* vShaderCode = vertexCode.c_str();
         const char* fShaderCode = fragmentCode.c_str();
@@ -101,11 +112,13 @@ public:
             glDeleteShader(geometry);
 
     }
+
     // Activate the shader
     void use()
     {
         glUseProgram(ID);
     }
+
     // Util uniform functions
     void setBool(const std::string& name, bool value) const
     {
@@ -179,7 +192,7 @@ private:
             if (!success)
             {
                 glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-                std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+                std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << "\n";
             }
         }
         else
@@ -188,7 +201,7 @@ private:
             if (!success)
             {
                 glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-                std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+                std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << "\n";
             }
         }
     }

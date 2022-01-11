@@ -1,32 +1,28 @@
-// I don't even know what needs and doesn't need to be included here,
-// but I *think* all of this needs to be included
 #include "util.h"
 #include <string>
 #include "perlin_noise.h"
 #include <array>
 #include "Chunk.h"
 
-// Absolute mess of variables
-
-// Camera
+// - Camera variables -
 glm::vec3 cameraPos = glm::vec3(0.0f, 15.0f, 0.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
-// Stuff to do with mouse & camera
+double yaw = -90.0f;
+double pitch = 0.0f;
+
+// Keeps mouse movement outside of the window when created from causing the camera to move
 bool firstMouse = true;
 
 
 // Yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing
-// to the right so we initially rotate a bit to the left
-double yaw = -90.0f;
-
-double pitch = 0.0f;
+// to the right so it's initially rotated a bit to the left
 double lastX = SCR_WIDTH / 2.0;
 double lastY = SCR_HEIGHT / 2.0;
 float fov = 45.0f;
 
-// Time and FPS stuff
+// Time calculation variables
 double deltaTime = 0.0f;
 double lastFrame = 0.0f;
 double FPS = 0.0f;
@@ -66,7 +62,7 @@ int main()
 
     std::vector<Chunk*> chunkArray;
 
-    const int chunkRenderSize = 5;
+    const int chunkRenderSize = 10;
     int chunkArrSize = 0;
 
     unsigned int chunkVAOs[chunkRenderSize * chunkRenderSize];
@@ -94,9 +90,9 @@ int main()
                 error << "[MAIN_CHUNKGEN/FATAL]: " << e.what() << "\n";
                 err(error.str());
 
-                std::cout << "[MAIN_FERR_MSG]: " << "Failed to generate chunk " << i << ". \nA crash log has *not* been created, at [NONEXISTENT_PATH]\n";
+                std::cout << "[MAIN_FERR_MSG]: " << "Failed to generate chunk " << i << ".\n";
 
-                return (int)e.what();
+                return (e.what()[0] + e.what()[1]) * -1;
             }
             
 
@@ -172,7 +168,7 @@ int main()
         shader.use();
 
         // Pass projection matrix to shader
-        glm::mat4 projection = glm::perspective(glm::radians(fov), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        glm::mat4 projection = glm::perspective(glm::radians(fov), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f);
         shader.setMat4("projection", projection);
 
         // Camera/view transformation matrix
@@ -198,7 +194,7 @@ int main()
                 shader.setMat4("model", model);
 
                 // Draw chunk
-                glDrawArrays(GL_TRIANGLES, 0, chunkArrSize);
+                glDrawArrays(GL_TRIANGLES, 0, chunkArray[x * chunkRenderSize + y]->chunkMeshSize);
                 i++;
             }
         }

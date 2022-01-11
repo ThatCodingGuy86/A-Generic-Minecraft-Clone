@@ -164,10 +164,12 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BlockData.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="Chunk.h" />
     <ClInclude Include="collision.h" />
     <ClInclude Include="error.h" />
+    <ClInclude Include="perlinNoise.h" />
     <ClInclude Include="perlin_noise.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="stb_image.h" />

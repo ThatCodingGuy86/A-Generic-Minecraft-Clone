@@ -12,6 +12,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
+// Process general input
 void processInput(GLFWwindow* window);
 
 GLFWwindow* window;
@@ -32,7 +33,7 @@ int init()
     window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "OpenGL", NULL, NULL);
     if (window == NULL)
     {
-        std::cout << "Failed to create GLFW window" << std::endl;
+        std::cout << "[INIT/FERR]: Failed to create GLFW window" << "\n";
         glfwTerminate();
         return -1;
     }
@@ -47,7 +48,7 @@ int init()
     // Load OpenGL function pointers
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
-        std::cout << "Failed to initialize GLAD" << std::endl;
+        std::cout << "[INIT/FERR]: Failed to initialize GLAD" << "\n";
         return -1;
     }
 
