@@ -2,9 +2,18 @@
 #include <vector>
 #include "VoxelData.h"
 #include <iostream>
-#include "perlin_noise.h"
+#include "FastNoiseLite.h"
 #include <stdexcept>
 #include "error.h"
+
+template<typename T>
+T random(T range_from, T range_to) {
+	std::random_device                  rand_dev;
+	std::mt19937                        generator(rand_dev());
+	std::uniform_int_distribution<T>    distr(range_from, range_to);
+	return distr(generator);
+}
+
 
 class Chunk
 {
@@ -12,15 +21,14 @@ class Chunk
 	int8_t blocks[16][16][16] = { {{0}} };
 
 	// PerlinNoise initilizer(s?)
-	const siv::PerlinNoise::seed_type seed = 845275u;
-	const siv::PerlinNoise perlin{ seed };
+	FastNoiseLite noise;
 	// Scale of the Perlin Noise (scales the output and not the input)
-	const float scale = 4;
+	const float scale = 70;
 	// Scale of the Perlin Noise (scales the input and not the output)
-	const float scaleInput = 4;
+	const float scaleInput = 0.005;
 
 	// The middle position for the terrain
-	const int startYVal = 5;
+	const int startYVal = 7;
 
 	
 
@@ -36,33 +44,41 @@ public:
 	{
 		ID = _ID;
 
+		noise.SetSeed(seed);
+
 		std::cout << "[CHUNKGEN/LOG]: Generating chunk " << std::to_string(ID) << "\n";
 
 		for (int y = 0; y < 16; y++)
 		{
 			for (int x = 0; x < 16; x++)
 			{
-				// Generate blocks using 2D Perlin Noise & raise an out_of_range execption if a block is, well,
-				// out of range
+				// Generate blocks using 2D noise & throw an exception if a block is out of range
 
-				float heightmapVal = (perlin.noise2D((((float)x) / scaleInput) + ((ID * 16) / scaleInput), (((float)y) / scaleInput) + ((ID * 16) / scaleInput)) * scale);
-				
+				float heightmapVal = startYVal + (noise.GetNoise((((float)x) * scaleInput) + ((ID * 16) * scaleInput), (((float)y) * scaleInput) + ((ID * 16) * scaleInput)) * scale);
+				heightmapVal = random(-1, 1);
 
-				if (startYVal + (int)heightmapVal >= 0 and startYVal + (int)heightmapVal <= 15)
+				blocks[x][8 + (int)heightmapVal][y] = 1;
+
+				/*if ((int)heightmapVal > 15 or (int)heightmapVal < 1)
 				{
-					blocks[x][startYVal + (int)heightmapVal][y] = 1;
+					std::cout << (int)heightmapVal << '\n';
+				}
+
+				if ((int)heightmapVal > 1 and (int)heightmapVal <= 15)
+				{
+					
 				}
 				else
 				{
 					std::stringstream error;
 
-					error << "[CHUNKGEN/FATAL]: Error: Attempted to place block at invalid position " << x << " : " << startYVal + (int)(perlin.noise2D((((float)x) / scaleInput) + ((ID * 16) / scaleInput), (((float)y) / scaleInput) + ((ID * 16) / scaleInput)) + ((ID * 16) / scaleInput)) << " : " << y << "\n";
+					error << "[CHUNKGEN/FATAL]: Error: Attempted to place block at invalid position " << x << " : " << heightmapVal << " : " << y << "\n";
 
 					err(error.str());
 
-					throw std::exception("chunkgen_fail");
+					//throw std::exception("chunkgen_fail");
 
-				}
+				}*/
 					
 					
 			}
@@ -82,18 +98,18 @@ public:
 				{
 					if (blocks[x][y][z] != 0)
 					{
-						if (z - 1 >= 0 and z - 1 <= 15)
+						if (z - 1 <= 15 and z - 1 >= 0)
 						{
 							if (blocks[x][y][z - 1] == 0)
 							{
 								for (int i = 0; i < 6; i++)
 								{
-									verts.insert(verts.end(), voxelData[0 + (6 * i)] + x);
-									verts.insert(verts.end(), voxelData[1 + (6 * i)] + y);
-									verts.insert(verts.end(), voxelData[2 + (6 * i)] + z);
-									verts.insert(verts.end(), voxelData[3 + (6 * i)] + 16);
-									verts.insert(verts.end(), voxelData[4 + (6 * i)]);
-									verts.insert(verts.end(), voxelData[5 + (6 * i)]);
+									verts.insert(verts.end(), voxelData[0 + (6 * i) + (6 * 6) * 0] + x);
+									verts.insert(verts.end(), voxelData[1 + (6 * i) + (6 * 6) * 0] + y);
+									verts.insert(verts.end(), voxelData[2 + (6 * i) + (6 * 6) * 0] + z);
+									verts.insert(verts.end(), voxelData[3 + (6 * i) + (6 * 6) * 0] + 16);
+									verts.insert(verts.end(), voxelData[4 + (6 * i) + (6 * 6) * 0]);
+									verts.insert(verts.end(), voxelData[5 + (6 * i) + (6 * 6) * 0]);
 								}
 							}
 						}
@@ -104,17 +120,17 @@ public:
 							{
 								for (int i = 0; i < 6; i++)
 								{
-									verts.insert(verts.end(), voxelData[(0 + (6 * i)) + 6 * 6] + x);
-									verts.insert(verts.end(), voxelData[(1 + (6 * i)) + 6 * 6] + y);
-									verts.insert(verts.end(), voxelData[(2 + (6 * i)) + 6 * 6] + z);
-									verts.insert(verts.end(), voxelData[(3 + (6 * i)) + 6 * 6] + 16);
-									verts.insert(verts.end(), voxelData[(4 + (6 * i)) + 6 * 6]);
-									verts.insert(verts.end(), voxelData[(5 + (6 * i)) + 6 * 6]);
+									verts.insert(verts.end(), voxelData[(0 + (6 * i)) + (6 * 6) * 1] + x);
+									verts.insert(verts.end(), voxelData[(1 + (6 * i)) + (6 * 6) * 1] + y);
+									verts.insert(verts.end(), voxelData[(2 + (6 * i)) + (6 * 6) * 1] + z);
+									verts.insert(verts.end(), voxelData[(3 + (6 * i)) + (6 * 6) * 1] + 16);
+									verts.insert(verts.end(), voxelData[(4 + (6 * i)) + (6 * 6) * 1]);
+									verts.insert(verts.end(), voxelData[(5 + (6 * i)) + (6 * 6) * 1]);
 								}
 							}
 						}
 
-						if (x - 1 >= 0 and x - 1 <= 15)
+						if (x - 1 <= 15 and x - 1 >= 0)
 						{
 							if (blocks[x - 1][y][z] == 0)
 							{
@@ -146,7 +162,7 @@ public:
 							}
 						}
 
-						if (y - 1 >= 0 and y - 1 <= 15)
+						if (y - 1 <= 15 and y - 1 >= 0)
 						{
 							if (blocks[x][y - 1][z] == 0)
 							{

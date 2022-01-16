@@ -169,6 +169,7 @@
     <ClInclude Include="Chunk.h" />
     <ClInclude Include="collision.h" />
     <ClInclude Include="error.h" />
+    <ClInclude Include="FastNoiseLite.h" />
     <ClInclude Include="perlinNoise.h" />
     <ClInclude Include="perlin_noise.h" />
     <ClInclude Include="shader.h" />
