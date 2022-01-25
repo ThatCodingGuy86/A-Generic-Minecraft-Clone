@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include "error.h"
 
+// Util function for generating a random number within a range (why is this not in std::random already)
 template<typename T>
 T random(T range_from, T range_to) {
 	std::random_device                  rand_dev;
@@ -18,46 +19,48 @@ T random(T range_from, T range_to) {
 class Chunk
 {
 	// Blocks array
-	int8_t blocks[16][16][16] = { {{0}} };
+	int8_t blocks[16][32][16] = { {{0}} };
 
-	// PerlinNoise initilizer(s?)
+	// Noise class instance
 	FastNoiseLite noise;
-	// Scale of the Perlin Noise (scales the output and not the input)
-	const float scale = 70;
-	// Scale of the Perlin Noise (scales the input and not the output)
-	const float scaleInput = 0.005;
+
+	// Scale of the noise (scales the output)
+	const double scale = 70;
+	// Input scale of the noise (scales the input)
+	const double scaleInput = 0.005;
 
 	// The middle position for the terrain
 	const int startYVal = 7;
 
-	
+	// XYZ to block array position
+	int XYZtB(int X, int Y, int Z)
+	{
+		return Z * 16 * 32 + Y * 16 + Z;
+	}
 
 public:
 	int ID;
 	int x = 0;
 	int y = 0;
 
-	// Self-explanatory
-	int chunkMeshSize = 0;
+	size_t chunkMeshSize = 0;
 
-	Chunk(int _ID, int seed)
+	Chunk(int ID, int seed) : ID(ID)
 	{
-		ID = _ID;
-
 		noise.SetSeed(seed);
 
 		std::cout << "[CHUNKGEN/LOG]: Generating chunk " << std::to_string(ID) << "\n";
 
+		// Generate blocks using 2D noise & throw an exception if a block is out of range
 		for (int y = 0; y < 16; y++)
 		{
 			for (int x = 0; x < 16; x++)
 			{
-				// Generate blocks using 2D noise & throw an exception if a block is out of range
 
-				float heightmapVal = startYVal + (noise.GetNoise((((float)x) * scaleInput) + ((ID * 16) * scaleInput), (((float)y) * scaleInput) + ((ID * 16) * scaleInput)) * scale);
-				heightmapVal = random(-1, 1);
+				//double heightmapVal = startYVal + (noise.GetNoise((((double)x) * scaleInput) + ((ID * 16) * scaleInput), (((double)y) * scaleInput) + ((ID * 16) * scaleInput)) * scale);
+				int heightmapVal = random(-1, 1);
 
-				blocks[x][8 + (int)heightmapVal][y] = 1;
+				blocks[x][startYVal + (int)heightmapVal][y] = 1;
 
 				/*if ((int)heightmapVal > 15 or (int)heightmapVal < 1)
 				{
@@ -85,12 +88,11 @@ public:
 		}
 	}
 
-	// Generates a mesh given a reference to a std::vector<float> (the vertices) and a reference to a int (the number of vertices)
-	void genChunkMesh(std::vector<float>& verts, int& chunkVertSize)
+	// Generates a mesh given a reference to a std::vector<float> (the vertices) and a reference to a size_t (the number of vertices)
+	void genChunkMesh(std::vector<float>& verts, size_t& chunkVertSize)
 	{
 		int vertsAdded = 0;
-
-		for (int y = 0; y < 16; y++)
+		for (int y = 0; y < 32; y++)
 		{
 			for (int z = 0; z < 16; z++)
 			{
@@ -110,6 +112,7 @@ public:
 									verts.insert(verts.end(), voxelData[3 + (6 * i) + (6 * 6) * 0] + 16);
 									verts.insert(verts.end(), voxelData[4 + (6 * i) + (6 * 6) * 0]);
 									verts.insert(verts.end(), voxelData[5 + (6 * i) + (6 * 6) * 0]);
+									vertsAdded += 1;
 								}
 							}
 						}
@@ -126,6 +129,7 @@ public:
 									verts.insert(verts.end(), voxelData[(3 + (6 * i)) + (6 * 6) * 1] + 16);
 									verts.insert(verts.end(), voxelData[(4 + (6 * i)) + (6 * 6) * 1]);
 									verts.insert(verts.end(), voxelData[(5 + (6 * i)) + (6 * 6) * 1]);
+									vertsAdded += 1;
 								}
 							}
 						}
@@ -142,6 +146,7 @@ public:
 									verts.insert(verts.end(), voxelData[(3 + (6 * i)) + (6 * 6) * 2] + 16);
 									verts.insert(verts.end(), voxelData[(4 + (6 * i)) + (6 * 6) * 2]);
 									verts.insert(verts.end(), voxelData[(5 + (6 * i)) + (6 * 6) * 2]);
+									vertsAdded += 1;
 								}
 							}
 						}
@@ -158,11 +163,12 @@ public:
 									verts.insert(verts.end(), voxelData[(3 + (6 * i)) + (6 * 6) * 3] + 16);
 									verts.insert(verts.end(), voxelData[(4 + (6 * i)) + (6 * 6) * 3]);
 									verts.insert(verts.end(), voxelData[(5 + (6 * i)) + (6 * 6) * 3]);
+									vertsAdded += 1;
 								}
 							}
 						}
 
-						if (y - 1 <= 15 and y - 1 >= 0)
+						if (y - 1 <= 31 and y - 1 >= 0)
 						{
 							if (blocks[x][y - 1][z] == 0)
 							{
@@ -174,11 +180,12 @@ public:
 									verts.insert(verts.end(), voxelData[(3 + (6 * i)) + (6 * 6) * 4]);
 									verts.insert(verts.end(), voxelData[(4 + (6 * i)) + (6 * 6) * 4]);
 									verts.insert(verts.end(), voxelData[(5 + (6 * i)) + (6 * 6) * 4]);
+									vertsAdded += 1;
 								}
 							}
 						}
 
-						if (y + 1 <= 15 and y + 1 >= 0)
+						if (y + 1 <= 31 and y + 1 >= 0)
 						{
 							if (blocks[x][y + 1][z] == 0)
 							{
@@ -190,6 +197,7 @@ public:
 									verts.insert(verts.end(), voxelData[(3 + (6 * i)) + (6 * 6) * 5] + 32);
 									verts.insert(verts.end(), voxelData[(4 + (6 * i)) + (6 * 6) * 5]);
 									verts.insert(verts.end(), voxelData[(5 + (6 * i)) + (6 * 6) * 5]);
+									vertsAdded += 1;
 								}
 							}
 						}
@@ -197,9 +205,12 @@ public:
 				}
 			}
 		}
-		
-		chunkVertSize = verts.size() / 6; // Divided by 6 because 1 vert definition is 6 elements long
-		chunkMeshSize = verts.size() / 6;
+		if (vertsAdded != verts.size() / 6)
+		{
+			std::cout << vertsAdded << " : " << verts.size() / 6 << '\n';
+		}
+		chunkVertSize = vertsAdded;
+		chunkMeshSize = vertsAdded;
 	}
 };
 

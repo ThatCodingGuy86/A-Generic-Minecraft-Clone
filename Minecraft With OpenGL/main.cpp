@@ -1,3 +1,20 @@
+#if defined(_WIN32)
+#define PLATFORM_NAME "Windows"
+#elif defined(_WIN64)
+#define PLATFORM_NAME "Windows"
+#elif defined(__CYGWIN__) && !defined(_WIN32)
+#define PLATFORM_NAME "Windows"
+#elif defined(__linux__)
+#define PLATFORM_NAME "Linux"
+#else
+#endif
+
+#if !defined(PLATFORM_NAME)
+#error Platform not supported.
+#endif
+
+
+
 #include "util.h"
 #include <string>
 #include "perlin_noise.h"
@@ -63,7 +80,7 @@ int main()
     std::vector<Chunk*> chunkArray;
 
     const int chunkRenderSize = 10;
-    int chunkArrSize = 0;
+    size_t chunkArrSize = 0;
 
     unsigned int chunkVAOs[chunkRenderSize * chunkRenderSize];
     unsigned int chunkVBOs[chunkRenderSize * chunkRenderSize];
@@ -194,7 +211,7 @@ int main()
                 shader.setMat4("model", model);
 
                 // Draw chunk
-                glDrawArrays(GL_TRIANGLES, 0, chunkArray[x * chunkRenderSize + y]->chunkMeshSize);
+                glDrawArrays(GL_TRIANGLES, 0, (GLsizei)chunkArray[x * chunkRenderSize + y]->chunkMeshSize);
                 i++;
             }
         }
