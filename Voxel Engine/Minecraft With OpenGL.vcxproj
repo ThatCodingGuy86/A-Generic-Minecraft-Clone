@@ -84,8 +84,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\nickk\source\repos\Minecraft With OpenGL\Minecraft With OpenGL\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\nickk\source\repos\Minecraft With OpenGL\Minecraft With OpenGL\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)Voxel Engine\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Voxel Engine\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
