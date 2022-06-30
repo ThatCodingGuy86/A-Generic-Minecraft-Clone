@@ -23,7 +23,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{0cc9ea18-2c29-4d3e-ba39-48ea336382ec}</ProjectGuid>
-    <RootNamespace>MinecraftWithOpenGL</RootNamespace>
+    <RootNamespace>VoxelEngine</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>Voxel Engine</ProjectName>
   </PropertyGroup>
@@ -74,8 +74,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\nickk\source\repos\Minecraft With OpenGL\Minecraft With OpenGL\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\nickk\source\repos\Minecraft With OpenGL\Minecraft With OpenGL\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)Voxel Engine\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Voxel Engine\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -162,7 +162,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\Downloads\glad\src\glad.c" />
+    <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
