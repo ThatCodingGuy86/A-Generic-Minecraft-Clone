@@ -47,9 +47,6 @@
     <ClInclude Include="text.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="perlin_noise.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="VoxelData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -57,9 +54,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="error.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="perlinNoise.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BlockData.h">
@@ -70,6 +64,12 @@
     </ClInclude>
     <ClInclude Include="collision.h">
       <Filter>Header Files\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="globals.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="World.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

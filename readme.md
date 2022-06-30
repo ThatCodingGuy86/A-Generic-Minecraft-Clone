@@ -1,2 +1,2 @@
-# A Generic Minecraft Clone
-This is a Mincraft clone I'm making purely to see if I can do it. 
+# A Generic Voxel Engine
+This is a voxel engine I'm making just to see if I can do it.

@@ -1,12 +1,21 @@
 #pragma once
 #include <glm/glm.hpp>
 
-// Defines a Ray type with an Origin and a Direction
-class Ray
+// Defines a Ray type with an Origin, a Direction and a check if it has been set.
+struct Ray
 {
-public:
 	glm::vec3 Origin;
 	glm::vec3 Dir;
+	bool isNull;
+};
+
+// Defines a Triangle type with 3 points defining a triangle, and a check if it has been set.
+struct Triangle
+{
+	glm::vec3 p0;
+	glm::vec3 p1;
+	glm::vec3 p2;
+	bool isNull;
 };
 
 using namespace glm;
@@ -31,7 +40,8 @@ class collision
 		return (det == 1e-6 && t >= 0.0 && u >= 0.0 && v >= 0.0 && (u + v) <= 1.0);
 	}
 
-	// Checks if a Ray intersects a triangle defined by p0, p1, and p2. If the Ray doesn't intersect the triangle, it returns a 0 vector. (I couldn't figure out how to make it return a null/empty value)
+public:
+	// Checks if a Ray intersects a triangle defined by p0, p1, and p2. If the Ray doesn't intersect the triangle, it returns a NAN vector.
 	vec3 rayIntersectTri(Ray R, vec3 p0, vec3 p1, vec3 p2)
 	{
 		vec3 N;
@@ -42,10 +52,9 @@ class collision
 		}
 		else
 		{
-			return vec3(0.0);
+			return vec3(NAN);
 		}
 	}
-
 };
 
 
